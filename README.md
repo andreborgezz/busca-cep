@@ -6,6 +6,20 @@ A aplicação foi idealizada para resolver um problema comum em sistemas web: re
 
 ---
 
+## 🚀 Deploy em produção
+
+* **API (Render):** [https://busca-cep-b1ak.onrender.com](https://busca-cep-b1ak.onrender.com)
+* **Front-end de demonstração (GitHub Pages):** _link disponível após publicação_
+
+> ⚠️ A API está hospedada no plano gratuito do Render — após um período de inatividade, o serviço "dorme" e a primeira requisição pode levar de 30 a 60 segundos para responder enquanto ele reinicia.
+
+**Exemplo de chamada direta:**
+```
+GET https://busca-cep-b1ak.onrender.com/cep/18110650
+```
+
+---
+
 ## 🎯 Escopo do Projeto
 
 O sistema funciona como uma ponte de comunicação assíncrona entre o cliente e a base de dados pública do ViaCEP. O fluxo de funcionamento do projeto segue a seguinte lógica:
@@ -61,7 +75,7 @@ node index.js
 
 ## 🧪 Teste da API em execução
 
-Para comprovar o funcionamento da API, abaixo está uma consulta real feita utilizando o CEP do Shopping Iguatemi da cidade onde moro, comparando o endereço retornado com um local existente e conhecido (Shopping Iguatemi Esplanada, em Votorantim/SP):
+Para comprovar o funcionamento da API, abaixo está uma consulta real, comparando o endereço retornado com um local existente e conhecido (Shopping Iguatemi Esplanada, em Votorantim/SP):
 
 ![alt text](imagens/shopping.png)
 
