@@ -1,8 +1,10 @@
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors'); //libera acesso da rota 
 
 const app = express();
 
+app.use(cors());
 app.listen(3000, () => {
   console.log("Api rodando na porta 3000");
 });

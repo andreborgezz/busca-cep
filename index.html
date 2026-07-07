@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuscaCEP</title>
+<style>
+  :root {
+    --verde: #1f8a4c;
+    --verde-claro: #e3f5ea;
+    --texto: #223327;
+    --branco: #fafdfb;
+    --linha: #d3e8da;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+    background-color: var(--branco);
+    background-image: url('imagens/brasil.png');
+    background-repeat: no-repeat;
+    background-position: top right;
+    background-size: 650px auto;
+    color: var(--texto);
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(250,253,251,0.6) 0%, rgba(227,245,234,0.85) 100%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 20px 20px;
+    width: 100%;
+  }
+
+  header { text-align: center; margin-bottom: 32px; }
+  h1 { font-size: 32px; margin: 0 0 6px; letter-spacing: -0.5px; }
+  h1 span { color: var(--verde); }
+  .subtitle { font-size: 14px; color: #5b6b60; margin: 0; }
+
+  .card {
+    background: var(--branco);
+    border: 1px solid var(--linha);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .explain { font-size: 14px; line-height: 1.6; margin: 0; color: #3a4a3f; }
+
+  .features {
+    margin: 14px 0 0;
+    padding-left: 18px;
+    font-size: 13.5px;
+    line-height: 1.9;
+    color: #3a4a3f;
+  }
+  .features strong { color: var(--verde); }
+  .features code { background: var(--verde-claro); padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+
+  h2 {
+    font-size: 15px;
+    margin: 0 0 14px;
+    color: var(--verde);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .badge {
+    background: var(--verde-claro);
+    color: var(--verde);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--linha);
+  }
+
+  .flow { margin: 0; padding-left: 20px; font-size: 13.5px; line-height: 1.9; color: #3a4a3f; }
+  .flow strong { color: var(--verde); }
+  .flow code { background: var(--verde-claro); padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+
+  .code-block {
+    background: #1e2a22;
+    color: #d4f0dd;
+    padding: 16px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin: 10px 0 0;
+  }
+
+  .search-row { display: flex; gap: 8px; }
+
+  input[type="text"] {
+    flex: 1;
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 1px solid var(--linha);
+    border-radius: 8px;
+    background: var(--verde-claro);
+  }
+  input[type="text"]:focus { outline: 2px solid var(--verde); outline-offset: 1px; }
+
+  button {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    background: var(--verde);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:hover { background: #187140; }
+
+  .hint { font-size: 12px; color: #7a8a7f; margin: 8px 0 0; }
+
+  #resultado { margin-top: 18px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--linha); }
+  th { width: 38%; color: var(--verde); font-weight: 600; font-size: 12px; text-transform: uppercase; }
+
+  .msg { padding: 12px 14px; border-radius: 8px; font-size: 14px; }
+  .msg.erro { background: #fdecec; border: 1px solid #e2a3a3; color: #a83b3b; }
+  .msg.loading { color: var(--verde); }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #8b9a90;
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 20px 40px;
+    line-height: 1.6;
+  }
+  footer code { background: var(--verde-claro); padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Busca<span>CEP</span></h1>
+    <p class="subtitle">Consulta de endereços via API própria (Node.js + Express)</p>
+  </header>
+
+  <div class="card">
+    <p class="explain">
+      Esse painel é a vitrine de uma <strong>API REST</strong> desenvolvida com
+      <strong>Node.js</strong> e <strong>Express</strong>, que atua como uma ponte entre
+      o cliente e o serviço público <strong>ViaCEP</strong>. A ideia é resolver um problema
+      comum em sistemas web: receber um dado bruto do usuário, tratá-lo, buscar a
+      informação em um serviço externo confiável, e devolver uma resposta limpa e
+      estruturada — sem expor o cliente diretamente à API de terceiros.
+    </p>
+
+    <div class="badges">
+      <span class="badge">Node.js</span>
+      <span class="badge">Express</span>
+      <span class="badge">Axios</span>
+      <span class="badge">Docker</span>
+      <span class="badge">ViaCEP</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Como funciona</h2>
+    <ol class="flow">
+      <li><strong>Entrada:</strong> a API recebe o CEP dinamicamente pela URL (<code>/cep/:cep</code>)</li>
+      <li><strong>Sanitização:</strong> remove hífen e qualquer caractere que não seja número</li>
+      <li><strong>Validação:</strong> confere se sobraram exatamente 8 dígitos numéricos — se não, responde <code>400</code> na hora, sem gastar uma chamada externa à toa</li>
+      <li><strong>Consulta assíncrona:</strong> usa <code>async/await</code> com Axios para buscar o endereço no ViaCEP</li>
+      <li><strong>Resposta tratada:</strong> filtra os campos relevantes e devolve tudo em JSON — ou <code>500</code> se o serviço externo falhar</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Exemplo de resposta</h2>
+    <p class="explain">Consulta real para o CEP <code>18110650</code>:</p>
+    <pre class="code-block">{
+  "cep": "18110650",
+  "logradouro": "Avenida Gisele Constantino",
+  "complemento": "",
+  "bairro": "Parque Bela Vista",
+  "localidade": "Votorantim",
+  "uf": "SP",
+  "estado": "São Paulo",
+  "regiao": "Sudeste",
+  "ddd": "15"
+}</pre>
+  </div>
+
+  <div class="card">
+    <h2>Teste você mesmo</h2>
+    <p class="explain">Digite um CEP abaixo para ver a API respondendo em tempo real:</p>
+  </div>
+
+  <div class="card">
+    <div class="search-row">
+      <input type="text" id="cepInput" placeholder="Digite o CEP, ex: 01001000" maxlength="9">
+      <button id="btnBuscar">Buscar</button>
+    </div>
+    <p class="hint">Aceita com ou sem hífen.</p>
+
+    <div id="resultado"></div>
+  </div>
+</div>
+
+<footer>
+  Endpoint: <code>/cep/:cep</code> — rodando em localhost:3000<br>
+  Projeto de estudo, feito para praticar API REST, integração assíncrona e containerização com Docker.
+</footer>
+
+<script>
+  const input = document.getElementById('cepInput');
+  const botao = document.getElementById('btnBuscar');
+  const resultado = document.getElementById('resultado');
+
+  const API_BASE = 'http://localhost:3000';
+
+  const campos = [
+    ['CEP', 'cep'],
+    ['Logradouro', 'logradouro'],
+    ['Complemento', 'complemento'],
+    ['Bairro', 'bairro'],
+    ['Cidade', 'localidade'],
+    ['UF', 'uf'],
+    ['Estado', 'estado'],
+    ['Região', 'regiao'],
+    ['DDD', 'ddd'],
+  ];
+
+  async function buscarCep() {
+    const cep = input.value.trim();
+
+    if (!cep) {
+      resultado.innerHTML = '<div class="msg erro">Digite um CEP antes de buscar.</div>';
+      return;
+    }
+
+    resultado.innerHTML = '<div class="msg loading">Consultando...</div>';
+
+    try {
+      const resposta = await fetch(`${API_BASE}/cep/${cep}`);
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        resultado.innerHTML = `<div class="msg erro">${dados.erro || 'Erro ao consultar o CEP.'}</div>`;
+        return;
+      }
+
+      const linhas = campos
+        .filter(([, chave]) => dados[chave] !== undefined && dados[chave] !== '')
+        .map(([label, chave]) => `<tr><th>${label}</th><td>${dados[chave]}</td></tr>`)
+        .join('');
+
+      resultado.innerHTML = `<table>${linhas}</table>`;
+    } catch (erro) {
+      resultado.innerHTML = '<div class="msg erro">Não foi possível conectar à API. Ela está rodando em localhost:3000?</div>';
+    }
+  }
+
+  botao.addEventListener('click', buscarCep);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') buscarCep();
+  });
+</script>
+
+</body>
+</html>
