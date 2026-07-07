@@ -34,6 +34,7 @@ app.get('/cep/:cep', async (req, res) => { // rota que recebe o cep pela URL (pa
     res.json({ // devolve pro cliente só os campos que interessam, filtrados da resposta do ViaCEP
       cep: cep,
       logradouro: resposta.data.logradouro,
+      complemento: resposta.data.complemento,
       bairro: resposta.data.bairro,
       localidade: resposta.data.localidade,
       uf: resposta.data.uf,

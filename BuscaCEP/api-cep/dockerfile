@@ -13,8 +13,11 @@ RUN rm -rf node_modules
 # apaga a pasta node_modules pra instalar tudo no npm install
 RUN npm install
 
-CMD ["node", "index.js"]
-#roda o arquivo index.js do projeto igual quando rodamos no terminal local 
+# Troque de: CMD ["nodemon", "index.js"]
+# Para:
+
+CMD ["npm", "run", "dev"] 
+#chamando nodemon que esta no package.json no terminal do docker para rodar e a qualquer alteração já ser atualizado.
 
 EXPOSE 3000
 #porta que o container vai rodar, ent nesse caso porta: 3000
