@@ -108,10 +108,15 @@
     margin: 10px 0 0;
   }
 
-  .search-row { display: flex; gap: 8px; }
+  .search-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 
   input[type="text"] {
-    flex: 1;
+    flex: 1 1 200px;
+    min-width: 0;
     padding: 12px 14px;
     font-size: 15px;
     border: 1px solid var(--linha);
@@ -121,6 +126,7 @@
   input[type="text"]:focus { outline: 2px solid var(--verde); outline-offset: 1px; }
 
   button {
+    flex: 1 1 auto;
     padding: 12px 20px;
     font-size: 14px;
     font-weight: 600;
@@ -129,8 +135,18 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    white-space: nowrap;
   }
   button:hover { background: #187140; }
+
+  @media (max-width: 420px) {
+    .search-row {
+      flex-direction: column;
+    }
+    input[type="text"], button {
+      width: 100%;
+    }
+  }
 
   .hint { font-size: 12px; color: #7a8a7f; margin: 8px 0 0; }
 
@@ -229,7 +245,7 @@
 </div>
 
 <footer>
-  Endpoint: <code>/cep/:cep</code> — rodando em localhost:3000<br>
+  Endpoint: <code>/cep/:cep</code> — rodando em produção no Render<br>
   Projeto de estudo, feito para praticar API REST, integração assíncrona e containerização com Docker.
 </footer>
 
@@ -278,7 +294,7 @@
 
       resultado.innerHTML = `<table>${linhas}</table>`;
     } catch (erro) {
-      resultado.innerHTML = '<div class="msg erro">Não foi possível conectar à API. Ela está rodando em localhost:3000?</div>';
+      resultado.innerHTML = '<div class="msg erro">Não foi possível conectar à API. Tente novamente em instantes (o servidor gratuito pode levar alguns segundos para acordar).</div>';
     }
   }
 
